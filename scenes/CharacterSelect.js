@@ -50,31 +50,35 @@ export default class TitleSplash extends Phaser.Scene {
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
+    this.movingOn = false;
+
     this.leftKey.on('down', () => {
-      if (this.selectedIdx % 4 !== 0) {
+      if (!this.movingOn && this.selectedIdx % 4 !== 0) {
         this.selectedIdx--;
       }
     });
 
     this.rightKey.on('down', () => {
-      if (this.selectedIdx % 4 !== 3) {
+      if (!this.movingOn && this.selectedIdx % 4 !== 3) {
         this.selectedIdx++;
       }
     });
 
     this.upKey.on('down', () => {
-      if (this.selectedIdx >= 4) {
+      if (!this.movingOn && this.selectedIdx >= 4) {
         this.selectedIdx -= 4;
       }
     });
 
     this.downKey.on('down', () => {
-      if (this.selectedIdx < 4) {
+      if (!this.movingOn && this.selectedIdx < 4) {
         this.selectedIdx += 4;
       }
     });
 
     this.spaceBar.on('down', () => {
+      if (this.movingOn) return;
+      this.movingOn = true;
       this.cameras.main.fadeOut(500, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
         this.scene.start("MainScene", {playerSpriteName: this.playerSpriteSheets[this.selectedIdx]});

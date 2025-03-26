@@ -13,6 +13,7 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     this.load.image('tiles', 'public/assets/groundtiles.png');
     this.load.image('topdecimg', 'public/assets/topdec2.png');
+    this.load.image('MccSideImg', 'public/assets/MccSideImg.png');
     this.load.image('treeimg', 'public/assets/tree.png');
     this.load.tilemapTiledJSON('tilemap', 'public/assets/neighborhoodmap.json');
     for (let i = 1; i <= 8; i++) {
@@ -20,7 +21,7 @@ export default class MainScene extends Phaser.Scene {
       this.load.spritesheet(pName, `public/assets/${pName}sheet.png`, { frameWidth: 32, frameHeight: 32 });
     }
 
-    this.load.image('sky', 'public/assets/darksky.png');
+    this.load.image('sky', 'public/assets/bgsky.png');
 
     this.load.image('sea', 'public/assets/seatry2.png');
 
@@ -56,14 +57,15 @@ export default class MainScene extends Phaser.Scene {
 
     const map = this.make.tilemap({ key: 'tilemap'});
     const tileset = map.addTilesetImage('groundset', 'tiles');
-    // const tileset2 = map.addTilesetImage('topdec', 'topdecimg');
+    const mccSideTileset = map.addTilesetImage('MccSideTileset', 'MccSideImg');
     // const tileset3 = map.addTilesetImage('tree', 'treeimg');
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     const ground = map.createLayer('ground', tileset);
     const lightbulbsLayer = map.getObjectLayer('lightbulbs')['objects'];
+    const doorsLayer = map.getObjectLayer('DoorsLayer')['objects'];
 
-    // const topdecor = map.createLayer('topdecor', tileset2);
+    const mccSideLayer = map.createLayer('MccSideLayer', mccSideTileset);
     // const treedecor = map.createLayer('trees', tileset3);
     ground.setCollisionByProperty({ collides: true });
 
@@ -117,12 +119,24 @@ export default class MainScene extends Phaser.Scene {
       this.bulbs.add(new Lightbulb({scene:this,x,y}));
     });
 
+    doorsLayer.forEach(doorObj => {
+      const {x, y, width, height, properties} = doorObj;
+      const door = this.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, 0).setOrigin(0, 0);
+      this.physics.add.existing(door, true);
+      // when player collides with door, trigger function to run
+      this.physics.add.overlap(this.player, door, () => {
+        //alert("HEY!");
+      });
+    });
+
+
+
     this.physics.add.collider(this.player, ground);
     this.bulbAmount = 100;
     this.bulbCollider = this.physics.add.collider(this.player, this.bulbs, (p, b) => { b.destroy(); this.bulbCount++; });
     this.bulbCollider.overlapOnly = true;
     
-    this.add.rectangle(0, 0, width, 20, 0x000000).setOrigin(0, 0).setScrollFactor(0, 0);
+    this.add.rectangle(0, 0, width, 20, 0x000000, 0.0).setOrigin(0, 0).setScrollFactor(0, 0);
     this.scoreText = this.add.bitmapText(10, 5, "pixelfont", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
     this.timeText = this.add.bitmapText(width - 10, 5, "pixelfont", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
     this.timeLimit = 600;
@@ -159,7 +173,7 @@ export default class MainScene extends Phaser.Scene {
   update() {
     this.scoreText.setText(`SCORE: ${this.currentScore + this.bulbAmount * this.bulbCount}`);
 
-    const runVelocity = 160 * (this.cursors.shift.isDown ? 1.01 : 1);
+    const runVelocity = 160 * (this.cursors.shift.isDown ? 4 : 1);
     
     const targetAlpha = Math.max(0, 0.15 - this.bulbCount * 0.025);
     const currentAlpha = this.overlay.fillAlpha;

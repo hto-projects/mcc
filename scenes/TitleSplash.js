@@ -31,7 +31,11 @@ export default class TitleSplash extends Phaser.Scene {
       }
     });
 
+    this.movingOn = false;
+
     this.input.keyboard.on('keydown', () => {
+      if (this.movingOn) return;
+      this.movingOn = true;
       blinkEvent.remove();
       this.cameras.main.fadeOut(500, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
