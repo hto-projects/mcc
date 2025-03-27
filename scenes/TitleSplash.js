@@ -42,5 +42,7 @@ export default class TitleSplash extends Phaser.Scene {
         this.scene.start("CharacterSelect");
       });
     }, this);
+
+    this.cameras.main.fadeIn(500, 0, 0, 0);
   }
 }

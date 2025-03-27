@@ -1,4 +1,4 @@
-export default class TitleSplash extends Phaser.Scene {
+export default class CharacterSelect extends Phaser.Scene {
   constructor() {
     super("CharacterSelect");
   }
@@ -10,7 +10,6 @@ export default class TitleSplash extends Phaser.Scene {
     this.playerSpriteSheets = [];
     for (let i = 1; i <= 8; i++) {
       const pName = `player${i}`;
-      this.load.spritesheet(pName, `public/assets/${pName}sheet.png`, { frameWidth: 32, frameHeight: 32 });
       this.playerSpriteSheets.push(pName);
     }
 
@@ -81,7 +80,7 @@ export default class TitleSplash extends Phaser.Scene {
       this.movingOn = true;
       this.cameras.main.fadeOut(500, 0, 0, 0);
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.scene.start("MainScene", {playerSpriteName: this.playerSpriteSheets[this.selectedIdx]});
+        this.scene.start("NeighborhoodScene", {playerSpriteName: this.playerSpriteSheets[this.selectedIdx]});
       });
     });
 

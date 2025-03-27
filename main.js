@@ -1,6 +1,9 @@
 import TitleSplash from "./scenes/TitleSplash.js";
-import MainScene from "./scenes/MainScene.js"
+import NeighborhoodScene from "./scenes/NeighborhoodScene.js"
 import CharacterSelect from "./scenes/CharacterSelect.js";
+import MccInteriorScene from "./scenes/MccInteriorScene.js";
+import Preloader from "./scenes/Preloader.js";
+import GameOverScene from "./scenes/GameOverScene.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -8,7 +11,7 @@ const config = {
   height: 386,
   pixelArt: true,
   antiAlias: false,
-  scene: [TitleSplash, CharacterSelect, MainScene],
+  scene: [Preloader, MccInteriorScene, TitleSplash, CharacterSelect, NeighborhoodScene, GameOverScene],
   physics: {
     default: "arcade",
     arcade: {

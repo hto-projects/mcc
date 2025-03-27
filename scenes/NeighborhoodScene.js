@@ -5,43 +5,22 @@ const createAligned = (scene, count, texture, scrollFactor) => {
 
 import Lightbulb from '../sprites/Lightbulb.js';
 
-export default class MainScene extends Phaser.Scene {
+export default class NeighborhoodScene extends Phaser.Scene {
   constructor() {
-    super("MainScene");
-  }
-
-  preload() {
-    this.load.image('tiles', 'public/assets/groundtiles.png');
-    this.load.image('topdecimg', 'public/assets/topdec2.png');
-    this.load.image('MccSideImg', 'public/assets/MccSideImg.png');
-    this.load.image('treeimg', 'public/assets/tree.png');
-    this.load.tilemapTiledJSON('tilemap', 'public/assets/neighborhoodmap.json');
-    for (let i = 1; i <= 8; i++) {
-      const pName = `player${i}`;
-      this.load.spritesheet(pName, `public/assets/${pName}sheet.png`, { frameWidth: 32, frameHeight: 32 });
-    }
-
-    this.load.image('sky', 'public/assets/bgsky.png');
-
-    this.load.image('sea', 'public/assets/seatry2.png');
-
-    this.load.image('mtn1', 'public/assets/bgmtn1a.png');
-    this.load.image('mtn2', 'public/assets/bgmtn2a.png');
-
-    this.load.spritesheet('lightbulb', 'public/assets/lightbulbsheet2.png', { frameWidth: 16, frameHeight: 16 });
-
-    this.load.bitmapFont("pixelfont", "public/assets/fonts/pixelfont.png", "public/assets/fonts/pixelfont.xml");
+    super("NeighborhoodScene");
   }
 
   init(data) {
-    this.playerSpriteName = data.playerSpriteName;
+    this.playerSpriteName = data.playerSpriteName || "player1";
+    this.currentScore = data.currentScore || 0;
   }
 
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
 
-    this.currentScore = 0;
+    this.movingOn = false;
+
     this.bulbCount = 0;
 
     const sky = this.add.image(width * .5, height * .5, 'sky').setScrollFactor(0, 0);
@@ -55,11 +34,11 @@ export default class MainScene extends Phaser.Scene {
 
     // const sea = this.add.image(0, 0, 'sea').setOrigin(0, 0).setScrollFactor(.75);
 
-    const map = this.make.tilemap({ key: 'tilemap'});
+    const map = this.make.tilemap({ key: 'neighborhoodtilemap'});
     const tileset = map.addTilesetImage('groundset', 'tiles');
     const mccSideTileset = map.addTilesetImage('MccSideTileset', 'MccSideImg');
     // const tileset3 = map.addTilesetImage('tree', 'treeimg');
-    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels, true, true, false, true);
 
     const ground = map.createLayer('ground', tileset);
     const lightbulbsLayer = map.getObjectLayer('lightbulbs')['objects'];
@@ -69,11 +48,15 @@ export default class MainScene extends Phaser.Scene {
     // const treedecor = map.createLayer('trees', tileset3);
     ground.setCollisionByProperty({ collides: true });
 
+
+    console.log(this.playerSpriteName);
     this.player = this.physics.add.sprite(100, 200, this.playerSpriteName);
     this.player.body.setGravityY(300);
     this.player.setCollideWorldBounds(true);
+    this.player.setDepth(1);
 
       //  Our player animations, turning, walking left and walking right.
+      this.anims.remove('left');
       this.anims.create({
         key: 'left',
         frames: this.anims.generateFrameNumbers(this.playerSpriteName, { start: 0, end: 3 }),
@@ -81,18 +64,21 @@ export default class MainScene extends Phaser.Scene {
         repeat: -1
     });
 
+    this.anims.remove('jump');
     this.anims.create({
         key: 'jump',
         frames: [ { key: this.playerSpriteName, frame: 1 } ],
         frameRate: 20
     });
 
+    this.anims.remove('turn');
     this.anims.create({
         key: 'turn',
         frames: [ { key: this.playerSpriteName, frame: 0 } ],
         frameRate: 20
     });
 
+    this.anims.remove('right');
     this.anims.create({
         key: 'right',
         frames: this.anims.generateFrameNumbers(this.playerSpriteName, { start: 0, end: 3 }),
@@ -121,24 +107,39 @@ export default class MainScene extends Phaser.Scene {
 
     doorsLayer.forEach(doorObj => {
       const {x, y, width, height, properties} = doorObj;
-      const door = this.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, 0).setOrigin(0, 0);
+      const door = this.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, 0).setOrigin(.5, .5);
+      // set door to not be transparent anymore
+
       this.physics.add.existing(door, true);
       // when player collides with door, trigger function to run
       this.physics.add.overlap(this.player, door, () => {
-        //alert("HEY!");
+        if (this.movingOn) return;
+        this.timeTicking = false;
+        this.currentScore = this.currentScore + this.timeLimit;
+        this.movingOn = true;
+        door.setFillStyle(0x000000, 1);
+        this.player.setVelocityX(Phaser.Math.Linear(160, 0, .7));
+        this.player.anims.play('turn');
+        this.player.setAlpha(Phaser.Math.Linear(1, 0, .5));
+        
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start("MccInteriorScene", {playerSpriteName: this.playerSpriteName, currentScore: this.currentScore});
+        });
       });
     });
 
-
-
     this.physics.add.collider(this.player, ground);
     this.bulbAmount = 100;
-    this.bulbCollider = this.physics.add.collider(this.player, this.bulbs, (p, b) => { b.destroy(); this.bulbCount++; });
+    this.bulbCollider = this.physics.add.collider(this.player, this.bulbs, (p, b) => { b.destroy(); this.bulbCount++; this.currentScore += this.bulbAmount; });
     this.bulbCollider.overlapOnly = true;
     
-    this.add.rectangle(0, 0, width, 20, 0x000000, 0.0).setOrigin(0, 0).setScrollFactor(0, 0);
+    const topBarRect = this.add.rectangle(0, 0, width, 20, 0x000000, 1).setOrigin(0, 0).setScrollFactor(0, 0);
+    topBarRect.setDepth(2);
     this.scoreText = this.add.bitmapText(10, 5, "pixelfont", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
+    this.scoreText.setDepth(3);
     this.timeText = this.add.bitmapText(width - 10, 5, "pixelfont", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
+    this.timeText.setDepth(3);
     this.timeLimit = 600;
     this.timeTicking = true;
 
@@ -163,7 +164,16 @@ export default class MainScene extends Phaser.Scene {
         this.timeText.text = `00:${(this.timeLimit / 10).toFixed(1).padStart(4, '0')}`;
 
         if (this.timeLimit === 0) {
-          alert("NOOOO");
+          if (this.movingOn) return;
+          this.movingOn = true;
+          this.timeTicking = false;
+          this.player.setVelocityX(0);
+          this.player.anims.play('turn');
+          
+          this.cameras.main.fadeOut(1000, 0, 0, 0);
+          this.cameras.main.once('camerafadeoutcomplete', () => {
+            this.scene.start("GameOverScene", {playerSpriteName: this.playerSpriteName, currentScore: this.currentScore, win: false, lossReason: "you ran out of time!"});
+          });
         }
       }
   });
@@ -171,7 +181,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.scoreText.setText(`SCORE: ${this.currentScore + this.bulbAmount * this.bulbCount}`);
+    this.scoreText.setText(`SCORE: ${this.currentScore}`);
 
     const runVelocity = 160 * (this.cursors.shift.isDown ? 4 : 1);
     
@@ -180,6 +190,10 @@ export default class MainScene extends Phaser.Scene {
     this.overlay.setFillStyle(0x000000, Phaser.Math.Linear(currentAlpha, targetAlpha, 0.1));
 
     const bodyOnFloor = this.player.body.onFloor();
+
+    if (this.movingOn) {
+      return;
+    }
     if (this.cursors.left.isDown)
     {
       this.player.flipX = true;
