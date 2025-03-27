@@ -15,9 +15,7 @@ Various characters
 ### Quick Tutorial
 Use left and right to move. Press X to jump. Press Y to run. Collect as many light bulbs as you can, but avoid the monsters!
 
-Watch your timer, and find the keys hidden on each level to get through the doors to the next level.
-
-Goal: learn about MidTown and unlock
+Your goal is to enter the MCC before time runs out.
 
 Good luck, press start to begin!
 

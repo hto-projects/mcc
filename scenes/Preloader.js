@@ -31,6 +31,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('mtn2', 'public/assets/bgmtn2a.png');
 
     this.load.spritesheet('lightbulb', 'public/assets/lightbulbsheet2.png', { frameWidth: 16, frameHeight: 16 });
+    this.load.spritesheet('MonsterImg', 'public/assets/MonsterSheet.png', { frameWidth: 32, frameHeight: 32 });
 
     this.load.bitmapFont("pixelfont", "public/assets/fonts/pixelfont.png", "public/assets/fonts/pixelfont.xml");
   }

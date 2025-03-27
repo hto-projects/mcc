@@ -4,6 +4,7 @@ const createAligned = (scene, count, texture, scrollFactor) => {
 }
 
 import Lightbulb from '../sprites/Lightbulb.js';
+import Monster from '../sprites/Monster.js';
 
 export default class NeighborhoodScene extends Phaser.Scene {
   constructor() {
@@ -42,14 +43,15 @@ export default class NeighborhoodScene extends Phaser.Scene {
 
     const ground = map.createLayer('ground', tileset);
     const lightbulbsLayer = map.getObjectLayer('lightbulbs')['objects'];
+    const monstersLayer = map.getObjectLayer('MonstersLayer')['objects'];
     const doorsLayer = map.getObjectLayer('DoorsLayer')['objects'];
+    const enemyWallsLayer = map.getObjectLayer('EnemyWallsLayer')['objects'];
 
     const mccSideLayer = map.createLayer('MccSideLayer', mccSideTileset);
     // const treedecor = map.createLayer('trees', tileset3);
     ground.setCollisionByProperty({ collides: true });
 
 
-    console.log(this.playerSpriteName);
     this.player = this.physics.add.sprite(100, 200, this.playerSpriteName);
     this.player.body.setGravityY(300);
     this.player.setCollideWorldBounds(true);
@@ -91,18 +93,45 @@ export default class NeighborhoodScene extends Phaser.Scene {
       .setScrollFactor(0, 0);
 
     this.bulbs = this.physics.add.group({immovable: true, allowGravity: false});
+    this.enemyWalls = this.physics.add.group({immovable: true, allowGravity: false});
+    this.monsters = this.physics.add.group();
+    this.physics.add.collider(this.monsters, ground);
     
-
     this.anims.create({
       key: 'volt',
       frames: this.anims.generateFrameNumbers('lightbulb', { start: 0, end: 7 }),
       frameRate: 2,
       repeat: -1
     });
+    
+    this.anims.create({
+      key: 'move',
+      frames: this.anims.generateFrameNumbers('MonsterImg', { start: 0, end: 1 }),
+      frameRate: 5,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'fall',
+      frames: this.anims.generateFrameNumbers('MonsterImg', { frames: [0, 4, 0, 4, 0, 4, 3, 3, 3, 3, 3, 3] }),
+      frameRate: 12,
+    });
+
+    monstersLayer.forEach(monsterObj => {
+      const {x, y} = monsterObj;
+      const newMonster = new Monster({scene:this,x,y});
+      this.monsters.add(newMonster);
+    });
 
     lightbulbsLayer.forEach(lightbulbObj => {
       const {x, y} = lightbulbObj;
       this.bulbs.add(new Lightbulb({scene:this,x,y}));
+    });
+
+    enemyWallsLayer.forEach(enemyWallObj => {
+      const {x, y, width, height} = enemyWallObj;
+      const wall = this.add.rectangle(x, y, width, height, 0x000000, 0).setOrigin(0, 0);
+      this.enemyWalls.add(wall);
     });
 
     doorsLayer.forEach(doorObj => {
@@ -133,6 +162,30 @@ export default class NeighborhoodScene extends Phaser.Scene {
     this.bulbAmount = 100;
     this.bulbCollider = this.physics.add.collider(this.player, this.bulbs, (p, b) => { b.destroy(); this.bulbCount++; this.currentScore += this.bulbAmount; });
     this.bulbCollider.overlapOnly = true;
+
+    this.physics.add.collider(this.enemyWalls, this.monsters);
+
+    this.monsterCollider = this.physics.add.collider(this.player, this.monsters, (p, m) => {
+      if (p.y < (m.y-32)) {
+        this.currentScore += 200;
+        m.fall();
+        p.setVelocityY(-200);
+        m.on('animationcomplete', () => {
+          m.destroy();
+        });
+      } else {
+        if (this.movingOn) return;
+        this.movingOn = true;
+        this.timeTicking = false;
+        this.player.body.enable = false;
+        this.player.anims.play('turn');
+        
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start("GameOverScene", {playerSpriteName: this.playerSpriteName, currentScore: this.currentScore, win: false, lossReason: "a monster got you!"});
+        });
+      }
+    });
     
     const topBarRect = this.add.rectangle(0, 0, width, 20, 0x000000, 1).setOrigin(0, 0).setScrollFactor(0, 0);
     topBarRect.setDepth(2);
@@ -191,9 +244,15 @@ export default class NeighborhoodScene extends Phaser.Scene {
 
     const bodyOnFloor = this.player.body.onFloor();
 
+    // update monsters
+    this.monsters.children.iterate(monster => {
+      monster.update();
+    });
+
     if (this.movingOn) {
       return;
     }
+
     if (this.cursors.left.isDown)
     {
       this.player.flipX = true;
