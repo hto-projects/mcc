@@ -20,9 +20,22 @@ Your goal is to enter the MCC before time runs out.
 Good luck, press start to begin!
 
 ### Level One: The Neighborhood
+Welcome to Midtown!
+
+Use LEFT and RIGHT to move, and press A to jump.
+
+Avoid the monsters (or jump on them), and collect as many light bulbs as you can.
+
+Your goal is to make it to the MCC before time runs out.
+
+Good luck!
 
 ### Level Two: Inside the MCC
+You are now inside the Midtown Collaboration Center!
 
+Your new goal is to make it to Hyland's classroom. There, you can learn all about coding (including making games like this one).
+
+Good luck!
 
 
 
@@ -35,6 +48,12 @@ Agora theater
 Dunham Tavern
 
 Friendly Inn
+
+Park to Shop
+
+League Park
+
+Fannie M. Lewis Community Park
 
 Galluci's
 
