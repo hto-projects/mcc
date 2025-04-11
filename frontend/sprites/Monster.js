@@ -2,6 +2,7 @@ export default class Monster extends Phaser.Physics.Arcade.Sprite {
   constructor(config) {
     super(config.scene, config.x, config.y, 'MonstersImg');
     this.startX = config.x;
+    this.setDepth(1);
 
     this.startingX = config.x;
     config.scene.add.existing(this);

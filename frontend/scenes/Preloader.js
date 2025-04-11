@@ -10,13 +10,21 @@ export default class Preloader extends Phaser.Scene {
     this.load.bitmapFont("pixelfont", "public/assets/fonts/pixelfont.png", "public/assets/fonts/pixelfont.xml");
     this.load.bitmapFont("pixelfontyellow", "public/assets/fonts/pixelfontyellow.png", "public/assets/fonts/pixelfont.xml");
 
-    this.load.image('tiles', 'public/assets/groundtiles.png');
+    this.load.image('tiles', 'public/assets/groundtilesq.png');
     this.load.image('topdecimg', 'public/assets/topdec2.png');
-    this.load.image('neighborhooddecor', 'public/assets/bgtest3.png');
+    this.load.image('neighborhooddecor', 'public/assets/bgtest7.png');
+    this.load.image('mccdecor', 'public/assets/bgtest5.png');
     this.load.image('MccSideImg', 'public/assets/MccSideImg.png');
     this.load.image('HylandClassroom3', 'public/assets/HylandClassroom3.png');
     this.load.image('ABtn', 'public/assets/abutton.png');
     this.load.image('treeimg', 'public/assets/tree.png');
+    this.load.image('GrassFront', 'public/assets/grassfront.png');
+    this.load.image('SidewalkLong', 'public/assets/sidewalklong.png');
+    this.load.image('Street', 'public/assets/street.png');
+    this.load.image('Buildings', 'public/assets/neighborhoodmapdecor.png');
+    this.load.image('TERMINAL', 'public/assets/terminaltower.png');
+    this.load.image('KEY', 'public/assets/key.png');
+    this.load.image('CSU', 'public/assets/csu.png');
     this.load.tilemapTiledJSON('mcctilemap', 'public/assets/neighborhoodmap2.json');
     this.load.tilemapTiledJSON('neighborhoodtilemap', 'public/assets/neighborhoodmap.json');
 

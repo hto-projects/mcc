@@ -8,6 +8,7 @@ export default class MccInteriorScene extends LevelScene {
     data.tileMapName = "mcctilemap";
     data.playerStartX = 100;
     data.playerStartY = 200;
+    data.bgImgName = "mccdecor";
     data.nextSceneThroughDoor = "GameOverScene";
     data.instructionsString = `You are now inside the
 Midtown Collaboration Center!
@@ -18,7 +19,7 @@ Hyland's classroom.
 There, you can learn all about coding
 (including making games like this one).
 
-Press SPACE to begin. Good luck!`
+Press ${window.CONTROLLER ? "A" : "SPACE"} to begin. Good luck!`
 
     super("MccInteriorScene", data);
   }

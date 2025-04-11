@@ -51,12 +51,13 @@ export default class GameOverScene extends Phaser.Scene {
     this.doneLoading = false;
     this.initials = ["A", "A", "A"];
     const highScores = await getSortedHighScoresWithNew({ score: this.finalScore, initials: this.initials.join("") });
+    const saveMsg =  `Enter your initials and press ${window.CONTROLLER ? "START" : "SPACE"} to save your score.`
 
     const bannerText = this.add.bitmapText(width * .5, height * .1, 'pixelfont', "YOU WON!", 20).setOrigin(0.5);
     const subtitleText = this.add.bitmapText(width * .5, height * .15, 'pixelfont', `final score: ${this.finalScore}`, 15).setOrigin(0.5);
-    const instructionsText = this.add.bitmapText(width * .5, height * .2, 'pixelfont', "Enter your initials and press SPACE to save your score.", 10).setOrigin(0.5);
+    const instructionsText = this.add.bitmapText(width * .5, height * .2, 'pixelfont', saveMsg, 10).setOrigin(0.5);
 
-    this.start = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.start = window.CONTROLLER ? this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER) : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     this.start.on('down', () => {
       if (this.movingOn) return;
       this.movingOn = true;
@@ -73,7 +74,7 @@ export default class GameOverScene extends Phaser.Scene {
     if (!this.win) {
       bannerText.setText("GAME OVER");
       subtitleText.setText(this.lossReason);
-      instructionsText.setText("Press SPACE to return to the title screen.");
+      instructionsText.setText(`Press ${window.CONTROLLER ? "START" : "SPACE"} to return to the title screen.`);
       this.cameras.main.fadeIn(500, 0, 0, 0);
       return;
     }
@@ -136,7 +137,6 @@ export default class GameOverScene extends Phaser.Scene {
     });
 
     this.rightKey.on('down', () => {
-      console.log("right key on down");
       if (!this.movingOn && this.selectedInitial < this.initials.length - 1) {
         this.selectedInitial++;
       }

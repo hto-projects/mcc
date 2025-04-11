@@ -6,6 +6,7 @@ export default class LevelScene extends Phaser.Scene {
     super(levelSceneName);
 
     this.skyImgName = data.skyImgName || "sky";
+    this.bgImgName = data.bgImgName || "neighborhooddecor";
     this.tileMapName = data.tileMapName || "neighborhoodtilemap";
     this.playerStartX = data.playerStartX || 100;
     this.playerStartY = data.playerStartY || 200;
@@ -16,7 +17,7 @@ Your goal is to make it to the MCC.
 
 Use LEFT and RIGHT to move.
 
-Press SPACE to jump.
+Press ${window.CONTROLLER ? "A" : "SPACE"} to jump.
 
 Avoid the monsters (or jump on them).
 
@@ -43,6 +44,7 @@ Good luck!`;
     this.bulbCount = 0;
 
     const sky = this.add.image(width * .5, height * .5, this.skyImgName).setScrollFactor(0, 0);
+    sky.setDepth(.001)
     sky.setScale(2);
 
     const map = this.make.tilemap({ key: this.tileMapName});
@@ -51,7 +53,37 @@ Good luck!`;
     const hylandClassroomTileset = map.addTilesetImage('HylandClassroomTileset', 'HylandClassroom3');
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels, true, true, false, true);
 
-        const neighborhooddecor = this.add.image(0, 0, 'neighborhooddecor').setOrigin(0, 0).setScrollFactor(.84);
+    const neighborhooddecor = this.add.image(0, 0, this.bgImgName).setOrigin(0, 0).setScrollFactor(.84);
+    neighborhooddecor.setDepth(.05)
+    const grassfront = this.add.image(0, 5, "GrassFront").setOrigin(0, 0).setScrollFactor(1.125);
+    grassfront.setDepth(5);
+
+    const sidewalklong = this.add.image(0, 48, "SidewalkLong").setOrigin(0, 0).setScrollFactor(1);
+    sidewalklong.setDepth(.75);
+    const street = this.add.image(0, 32, "Street").setOrigin(0, 0).setScrollFactor(1);
+    street.setDepth(.5);
+
+    const buildings = this.add.image(0, -12, "Buildings").setOrigin(0, 0).setScrollFactor(1);
+    buildings.setDepth(.25);
+
+    const terminalTower = this.add.image(750, 40, "TERMINAL").setOrigin(0, 0).setScrollFactor(.75);
+    terminalTower.setDepth(.02);
+
+    const keyTower = this.add.image(900, 20, "KEY").setOrigin(0, 0).setScrollFactor(.75);
+    keyTower.setDepth(.01);
+
+    const csuRhodes = this.add.image(1000, 80, "CSU").setOrigin(0, 0).setScrollFactor(.75);
+    csuRhodes.setDepth(.03);
+
+    const fog = this.add.rectangle(0, 0, width, height, 0xFFFFFF, 0.59)
+    .setOrigin(0, 0)
+    .setScrollFactor(0, 0)
+    .setDepth(.04);
+
+    const fog2 = this.add.rectangle(0, 0, width, height, 0xFFFFFF, 0.59)
+    .setOrigin(0, 0)
+    .setScrollFactor(0, 0)
+    .setDepth(.1);
 
     const ground = map.createLayer('ground', tileset);
     const lightbulbsLayer = map.getObjectLayer('lightbulbs')['objects'];
@@ -62,8 +94,19 @@ Good luck!`;
     const enemyWallsLayer = enemyWallsObjectLayer ? enemyWallsObjectLayer['objects'] : [];
 
     const mccSideLayer = map.createLayer('MccSideLayer', mccSideTileset);
+    mccSideLayer.setDepth(1);
+    mccSideLayer.y -= 5;
     const hylandClassroomLayer = map.createLayer('HylandClassroomLayer', hylandClassroomTileset);
     ground.setCollisionByProperty({ collides: true });
+    for (let i = 0; i < ground.layer.data.length; i++) {
+      for (let j = 0; j < ground.layer.data[i].length; j++) {
+        const tile = ground.layer.data[i][j];
+        tile.collideDown = false;
+        tile.collideUp = true;
+        tile.collideLeft = true;
+        tile.collideRight = true;
+      }
+    }
 
     this.player = this.physics.add.sprite(this.playerStartX, this.playerStartY, this.playerSpriteName);
     this.player.body.setGravityY(300);
@@ -102,7 +145,8 @@ Good luck!`;
 
     this.overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.5)
       .setOrigin(0, 0)
-      .setScrollFactor(0, 0);
+      .setScrollFactor(0, 0)
+      .setDepth(.9)
 
     this.bulbs = this.physics.add.group({immovable: true, allowGravity: false});
     this.enemyWalls = this.physics.add.group({immovable: true, allowGravity: false});
@@ -152,6 +196,7 @@ Good luck!`;
     doorsLayer.forEach(doorObj => {
       const {x, y, width, height, properties} = doorObj;
       const door = this.add.rectangle(x + width / 2, y + height / 2, width, height, 0x000000, 0).setOrigin(.5, .5);
+      door.setDepth(2)
       this.physics.add.existing(door, true);
       
       this.physics.add.overlap(this.player, door, () => {
@@ -242,13 +287,19 @@ Good luck!`;
 
     this.instructionShowing = true;
     const instructionsEdge = 50;
+
     this.instructionsRectBorder = this.add.rectangle(instructionsEdge, instructionsEdge, width-(instructionsEdge*2), height-(instructionsEdge*2), 0xFFFFFF, 1).setOrigin(0, 0).setScrollFactor(0, 0);
     this.instructionsRectBorder.setDepth(4);
+
     this.instructionsRect = this.add.rectangle(instructionsEdge+5, instructionsEdge+5, width-((instructionsEdge+5)*2), height-((instructionsEdge+5)*2), 0x000000, 1).setOrigin(0, 0).setScrollFactor(0, 0);
     this.instructionsRect.setDepth(4);
-    this.instructionsText = this.add.bitmapText(width* .5, height * .5, "pixelfont", this.instructionsString, 12).setOrigin(.5, .5).setScrollFactor(0, 0);
 
+    this.instructionsText = this.add.bitmapText(width* .5, height * .5, "pixelfont", this.instructionsString, 12).setOrigin(.5, .5).setScrollFactor(0, 0);
     this.instructionsText.setDepth(4);
+
+    this.aBtn = this.add.image(width * .87, height * .78 + 20, 'ABtn').setOrigin(1, 1).setScrollFactor(0, 0);
+    this.aBtn.setAlpha(window.CONTROLLER ? 1 : 0);
+    this.aBtn.setDepth(4);
   }
 
   update() {
@@ -265,6 +316,7 @@ Good luck!`;
         this.instructionsRectBorder.destroy();
         this.instructionsRect.destroy();
         this.instructionsText.destroy();
+        this.aBtn.destroy();
       }
 
       return;
@@ -272,7 +324,7 @@ Good luck!`;
 
     const runVelocity = 160 * (this.cursors.shift.isDown ? 4 : 1);
     
-    const targetAlpha = Math.max(0, 0.15 - this.bulbCount * 0.025);
+    const targetAlpha = Math.max(0, 0.5 - this.bulbCount * 0.05);
     const currentAlpha = this.overlay.fillAlpha;
     this.overlay.setFillStyle(0x000000, Phaser.Math.Linear(currentAlpha, targetAlpha, 0.1));
 

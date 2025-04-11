@@ -21,23 +21,29 @@ export default class TitleSplash extends Phaser.Scene {
     const mcc = this.add.image(width * .5, height * .5, 'mcc');
     mcc.setScale(.25);
 
-    const pressStartText = this.add.bitmapText(width * .5, height * .75, 'pixelfontyellow', 'PRESS SPACE', 24).setOrigin(0.5);
+    const startMsg = `PRESS ${window.CONTROLLER ? "START" : "SPACE"}`;
+
+    const pressStartText = this.add.bitmapText(width * .5, height * .75, 'pixelfontyellow', startMsg, 24).setOrigin(0.5);
 
     const blinkEvent = this.time.addEvent({
       delay: 500,
       loop: true,
       callback: () => {
-        pressStartText.text = pressStartText.text === "" ? 'PRESS SPACE' : "";
+        pressStartText.text = pressStartText.text === "" ? startMsg : "";
       }
     });
 
     this.movingOn = false;
 
     this.input.keyboard.on('keydown', (e) => {
-      console.log(e.keyCode);
-      if (e.keyCode != Phaser.Input.Keyboard.KeyCodes.SPACE) {
+      if (!window.CONTROLLER && e.keyCode != Phaser.Input.Keyboard.KeyCodes.SPACE) {
         return;
       }
+
+      if (window.CONTROLLER && e.keyCode != Phaser.Input.Keyboard.KeyCodes.ENTER) {
+        return;
+      }
+
       if (this.movingOn) return;
       this.movingOn = true;
       blinkEvent.remove();
