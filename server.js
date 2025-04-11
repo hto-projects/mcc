@@ -11,7 +11,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.sendFile('frontend/index.html');
 });
-
+//
 db.connectDB();
 
 app.get('/high-scores', async (req, res) => {

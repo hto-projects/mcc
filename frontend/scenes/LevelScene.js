@@ -11,6 +11,8 @@ export default class LevelScene extends Phaser.Scene {
     this.playerStartX = data.playerStartX || 100;
     this.playerStartY = data.playerStartY || 200;
     this.nextSceneThroughDoor = data.nextSceneThroughDoor || "MccInteriorScene";
+    this.startDark = data.startDark || .5;
+    this.bulbLight = data.bulbLight || .05;
     this.instructionsString = data.instructionsString || `Welcome to Midtown!
 
 Your goal is to make it to the MCC.
@@ -53,39 +55,12 @@ Good luck!`;
     const hylandClassroomTileset = map.addTilesetImage('HylandClassroomTileset', 'HylandClassroom3');
     this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels, true, true, false, true);
 
-    const neighborhooddecor = this.add.image(0, 0, this.bgImgName).setOrigin(0, 0).setScrollFactor(.84);
-    neighborhooddecor.setDepth(.05)
-    const grassfront = this.add.image(0, 5, "GrassFront").setOrigin(0, 0).setScrollFactor(1.125);
-    grassfront.setDepth(5);
-
-    const sidewalklong = this.add.image(0, 48, "SidewalkLong").setOrigin(0, 0).setScrollFactor(1);
-    sidewalklong.setDepth(.75);
-    const street = this.add.image(0, 32, "Street").setOrigin(0, 0).setScrollFactor(1);
-    street.setDepth(.5);
-
-    const buildings = this.add.image(0, -12, "Buildings").setOrigin(0, 0).setScrollFactor(1);
-    buildings.setDepth(.25);
-
-    const terminalTower = this.add.image(750, 40, "TERMINAL").setOrigin(0, 0).setScrollFactor(.75);
-    terminalTower.setDepth(.02);
-
-    const keyTower = this.add.image(900, 20, "KEY").setOrigin(0, 0).setScrollFactor(.75);
-    keyTower.setDepth(.01);
-
-    const csuRhodes = this.add.image(1000, 80, "CSU").setOrigin(0, 0).setScrollFactor(.75);
-    csuRhodes.setDepth(.03);
-
-    const fog = this.add.rectangle(0, 0, width, height, 0xFFFFFF, 0.59)
-    .setOrigin(0, 0)
-    .setScrollFactor(0, 0)
-    .setDepth(.04);
-
-    const fog2 = this.add.rectangle(0, 0, width, height, 0xFFFFFF, 0.59)
-    .setOrigin(0, 0)
-    .setScrollFactor(0, 0)
-    .setDepth(.1);
+    
+    const bgBasic = this.add.image(0, 0, this.bgImgName).setOrigin(0, 0).setScrollFactor(.84);
+    bgBasic.setDepth(.05);
 
     const ground = map.createLayer('ground', tileset);
+    ground.setDepth(0);
     const lightbulbsLayer = map.getObjectLayer('lightbulbs')['objects'];
     const monstersObjectLayer = map.getObjectLayer('MonstersLayer');
     const monstersLayer = monstersObjectLayer ? monstersObjectLayer['objects'] : [];
@@ -97,6 +72,7 @@ Good luck!`;
     mccSideLayer.setDepth(1);
     mccSideLayer.y -= 5;
     const hylandClassroomLayer = map.createLayer('HylandClassroomLayer', hylandClassroomTileset);
+    hylandClassroomLayer && hylandClassroomLayer.setDepth(1);
     ground.setCollisionByProperty({ collides: true });
     for (let i = 0; i < ground.layer.data.length; i++) {
       for (let j = 0; j < ground.layer.data[i].length; j++) {
@@ -111,7 +87,7 @@ Good luck!`;
     this.player = this.physics.add.sprite(this.playerStartX, this.playerStartY, this.playerSpriteName);
     this.player.body.setGravityY(300);
     this.player.setCollideWorldBounds(true);
-    this.player.setDepth(1);
+    this.player.setDepth(1.1);
 
     this.anims.remove('left');
     this.anims.create({
@@ -143,7 +119,7 @@ Good luck!`;
         repeat: -1
     });
 
-    this.overlay = this.add.rectangle(0, 0, width, height, 0x000000, 0.5)
+    this.overlay = this.add.rectangle(0, 0, width, height, 0x000000, this.startDark)
       .setOrigin(0, 0)
       .setScrollFactor(0, 0)
       .setDepth(.9)
@@ -324,7 +300,7 @@ Good luck!`;
 
     const runVelocity = 160 * (this.cursors.shift.isDown ? 4 : 1);
     
-    const targetAlpha = Math.max(0, 0.5 - this.bulbCount * 0.05);
+    const targetAlpha = Math.max(0, this.startDark - this.bulbCount * this.bulbLight);
     const currentAlpha = this.overlay.fillAlpha;
     this.overlay.setFillStyle(0x000000, Phaser.Math.Linear(currentAlpha, targetAlpha, 0.1));
 

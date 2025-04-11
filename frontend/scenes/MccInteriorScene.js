@@ -10,6 +10,8 @@ export default class MccInteriorScene extends LevelScene {
     data.playerStartY = 200;
     data.bgImgName = "mccdecor";
     data.nextSceneThroughDoor = "GameOverScene";
+    data.startDark = .2;
+    data.bulbLight = .05;
     data.instructionsString = `You are now inside the
 Midtown Collaboration Center!
     
@@ -22,5 +24,14 @@ There, you can learn all about coding
 Press ${window.CONTROLLER ? "A" : "SPACE"} to begin. Good luck!`
 
     super("MccInteriorScene", data);
+  }
+
+  create() {
+    super.create();
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    const plats = this.add.image(0, -8, "mccplats").setOrigin(0, 0).setScrollFactor(1);
+    plats.setDepth(.25);
   }
 }
