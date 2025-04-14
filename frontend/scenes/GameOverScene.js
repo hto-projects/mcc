@@ -2,7 +2,6 @@ async function getHighScores() {
   try {
     const response = await fetch('/high-scores');
     const json = await response.json();
-    console.log(json);
     return json;
   } catch (error) {
     alert(error);
@@ -19,7 +18,6 @@ const saveNewHighScore = async (newScore) => {
       body: JSON.stringify(newScore)
     });
     const json = await response.json();
-    console.log(json);
   } catch (error) {
     alert(error);
   }
@@ -47,6 +45,7 @@ export default class GameOverScene extends Phaser.Scene {
   async create() {
     const width = this.scale.width;
     const height = this.scale.height;
+    this.initialsTextInScores = false;
     this.movingOn = false;
     this.doneLoading = false;
     this.initials = ["A", "A", "A"];
@@ -55,12 +54,17 @@ export default class GameOverScene extends Phaser.Scene {
 
     const bannerText = this.add.bitmapText(width * .5, height * .1, 'pixelfont', "YOU WON!", 20).setOrigin(0.5);
     const subtitleText = this.add.bitmapText(width * .5, height * .15, 'pixelfont', `final score: ${this.finalScore}`, 15).setOrigin(0.5);
-    const instructionsText = this.add.bitmapText(width * .5, height * .2, 'pixelfont', saveMsg, 10).setOrigin(0.5);
+    const instructionsText = this.add.bitmapText(width * .5, height * (this.win ? .2 : .25), 'pixelfont', saveMsg, 10).setOrigin(0.5);
 
-    this.start = window.CONTROLLER ? this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER) : this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.start = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     this.start.on('down', () => {
+      if (!window.CONTROLLER && this.win) {
+        return;
+      }
+
       if (this.movingOn) return;
       this.movingOn = true;
+
       if (this.win) {
         saveNewHighScore({ score: this.finalScore, initials: this.initials.join("") });
       }
@@ -71,11 +75,28 @@ export default class GameOverScene extends Phaser.Scene {
       });
     });
 
+    this.spaceA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+
     if (!this.win) {
       bannerText.setText("GAME OVER");
       subtitleText.setText(this.lossReason);
-      instructionsText.setText(`Press ${window.CONTROLLER ? "START" : "SPACE"} to return to the title screen.`);
+      instructionsText.setText(`Press ${window.CONTROLLER ? "START" : "ENTER"} to return to the title screen.`);
+      
+      const instructionsText2 = this.add.bitmapText(width * .5, height * .3, 'pixelfont', saveMsg, 10).setOrigin(0.5);
+      instructionsText2.setText(`Press ${window.CONTROLLER ? "A" : "SPACE"} to try again.`);
       this.cameras.main.fadeIn(500, 0, 0, 0);
+
+      this.spaceA.on('down', () => {
+        if (this.movingOn) return;
+        this.movingOn = true;
+  
+        window.tryingAgain = true;
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+          this.scene.start("NeighborhoodScene");
+        });
+      });
       return;
     }
 
@@ -129,6 +150,19 @@ export default class GameOverScene extends Phaser.Scene {
     this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+    this.spaceBar.on('down', () => {
+      if (this.movingOn) return;
+      this.movingOn = true;
+      if (this.win) {
+        saveNewHighScore({ score: this.finalScore, initials: this.initials.join("") });
+      }
+
+      this.cameras.main.fadeOut(1000, 0, 0, 0);
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.scene.start("TitleSplash");
+      });
+    })
 
     this.leftKey.on('down', () => {
       if (!this.movingOn && this.selectedInitial > 0) {

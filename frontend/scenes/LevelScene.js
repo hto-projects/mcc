@@ -40,7 +40,6 @@ Good luck!`;
     const height = this.scale.height;
 
     this.movingOn = false;
-    this.instructionsShowing = true;
     this.spaceDown = false;
 
     this.bulbCount = 0;
@@ -261,7 +260,9 @@ Good luck!`;
       }
     });
 
-    this.instructionShowing = true;
+    this.instructionsShowing = !window.tryingAgain;
+    if (!this.instructionsShowing) return;
+
     const instructionsEdge = 50;
 
     this.instructionsRectBorder = this.add.rectangle(instructionsEdge, instructionsEdge, width-(instructionsEdge*2), height-(instructionsEdge*2), 0xFFFFFF, 1).setOrigin(0, 0).setScrollFactor(0, 0);

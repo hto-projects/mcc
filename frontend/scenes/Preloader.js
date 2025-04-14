@@ -20,6 +20,9 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('ABtn', 'public/assets/abutton.png');
     this.load.image('treeimg', 'public/assets/tree.png');
     this.load.image('GrassFront', 'public/assets/grassfront.png');
+    this.load.image("MccFrontFrontFull", 'public/assets/mccfrontfrontfull.png');
+    this.load.image("Behind2", 'public/assets/testbehind2.png');
+    this.load.image("Behind3", 'public/assets/testbehind3.png');
     this.load.image('SidewalkLong', 'public/assets/sidewalklong.png');
     this.load.image('Street', 'public/assets/street.png');
     this.load.image('StreetTop', 'public/assets/streettop.png');

@@ -2,7 +2,6 @@ async function getHighScores() {
   try {
     const response = await fetch('/high-scores');
     const json = await response.json();
-    console.log(json);
     return json;
   } catch (error) {
     alert(error);
@@ -19,7 +18,6 @@ async function sendHighScore(newScore) {
       body: JSON.stringify(newScore)
     });
     const json = await response.json();
-    console.log(json);
   } catch (error) {
     alert(error);
   }

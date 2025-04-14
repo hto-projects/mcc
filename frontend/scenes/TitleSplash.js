@@ -14,6 +14,7 @@ export default class TitleSplash extends Phaser.Scene {
   create() {
     const width = this.scale.width;
     const height = this.scale.height;
+    window.tryingAgain = false;
 
     const hyland = this.add.image(width * .5, height * .25, 'hyland');
     hyland.setScale(.25);

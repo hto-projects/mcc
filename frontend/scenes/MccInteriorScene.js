@@ -33,5 +33,20 @@ Press ${window.CONTROLLER ? "A" : "SPACE"} to begin. Good luck!`
 
     const plats = this.add.image(0, -8, "mccplats").setOrigin(0, 0).setScrollFactor(1);
     plats.setDepth(.25);
+
+    const fog = this.add.rectangle(0, 0, width, height, 0x000000, .3)
+    .setOrigin(0, 0)
+    .setScrollFactor(0, 0)
+    .setDepth(.1);
+
+    const mccfrontfrontfulll = this.add.image(0, 22, "MccFrontFrontFull").setOrigin(0, 0).setScrollFactor(1.125);
+    mccfrontfrontfulll.setDepth(5);
+
+    // const street = this.add.image(0, 15, "Behind2").setOrigin(0, 0).setScrollFactor(1);
+    // street.setDepth(.24);
+
+    // const street2 = this.add.image(0, 25, "Behind3").setOrigin(0, 0).setScrollFactor(.9);
+    // street2.setDepth(.23);
+
   }
 }
