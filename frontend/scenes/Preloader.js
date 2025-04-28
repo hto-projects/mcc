@@ -28,6 +28,7 @@ export default class Preloader extends Phaser.Scene {
     this.load.image('StreetTop', 'public/assets/streettop.png');
     this.load.image('Buildings', 'public/assets/neighborhoodmapdecor.png');
     this.load.image('TERMINAL', 'public/assets/terminaltower.png');
+    this.load.image('HUNTINGTON', 'public/assets/huntington.png');
     this.load.image('KEY', 'public/assets/key.png');
     this.load.image('CSU', 'public/assets/csu.png');
     this.load.tilemapTiledJSON('mcctilemap', 'public/assets/neighborhoodmap2.json');

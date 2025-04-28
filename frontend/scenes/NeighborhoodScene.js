@@ -47,13 +47,16 @@ Press ${window.CONTROLLER ? "A" : "SPACE"} to begin. Good luck!`;
     const buildings = this.add.image(0, -12, "Buildings").setOrigin(0, 0).setScrollFactor(1);
     buildings.setDepth(.25);
 
-    const terminalTower = this.add.image(790, 40, "TERMINAL").setOrigin(0, 0).setScrollFactor(.75);
+    const terminalTower = this.add.image(780, 40, "TERMINAL").setOrigin(0, 0).setScrollFactor(.75);
     terminalTower.setDepth(.02);
 
-    const keyTower = this.add.image(900, 20, "KEY").setOrigin(0, 0).setScrollFactor(.75);
+    const keyTower = this.add.image(970, 20, "KEY").setOrigin(0, 0).setScrollFactor(.75);
     keyTower.setDepth(.01);
 
-    const csuRhodes = this.add.image(1000, 80, "CSU").setOrigin(0, 0).setScrollFactor(.75);
+    const huntington = this.add.image(855, 90, "HUNTINGTON").setOrigin(0, 0).setScrollFactor(.75);
+    huntington.setDepth(.02);
+
+    const csuRhodes = this.add.image(1055, 100, "CSU").setOrigin(0, 0).setScrollFactor(.75);
     csuRhodes.setDepth(.03);
 
     const fog = this.add.rectangle(0, 0, width, height, 0xFFFFFF, 0.59)
