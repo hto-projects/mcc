@@ -152,7 +152,7 @@ export default class GameOverScene extends Phaser.Scene {
     this.spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this.spaceBar.on('down', () => {
-      if (this.movingOn) return;
+      if (this.movingOn || window.CONTROLLER) return;
       this.movingOn = true;
       if (this.win) {
         saveNewHighScore({ score: this.finalScore, initials: this.initials.join("") });
