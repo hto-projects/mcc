@@ -9,6 +9,7 @@ export default class Preloader extends Phaser.Scene {
 
     this.load.bitmapFont("pixelfont", "public/assets/fonts/pixelfont.png", "public/assets/fonts/pixelfont.xml");
     this.load.bitmapFont("pixelfontyellow", "public/assets/fonts/pixelfontyellow.png", "public/assets/fonts/pixelfont.xml");
+    this.load.bitmapFont("pixelfontblack", "public/assets/fonts/pixelfontblack1.png", "public/assets/fonts/pixelfont.xml");
 
     this.load.image('tiles', 'public/assets/groundtiles.png');
     this.load.image('topdecimg', 'public/assets/topdec2.png');

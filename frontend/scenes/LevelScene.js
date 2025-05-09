@@ -219,16 +219,22 @@ Good luck!`;
         });
       }
     });
+
+    if (window.CONTROLLER) {
+      this.scoreText = this.add.bitmapText(50, 20, "pixelfontblack", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
+      this.timeText = this.add.bitmapText(width - 50, 20, "pixelfontblack", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
+    } else {
+      const topBarRect = this.add.rectangle(0, 0, width, 20, 0x000000, 1).setOrigin(0, 0).setScrollFactor(0, 0);
+      topBarRect.setDepth(2);
+      this.scoreText = this.add.bitmapText(10, 5, "pixelfont", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
+      this.timeText = this.add.bitmapText(width - 10, 5, "pixelfont", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
+    }
     
-    const topBarRect = this.add.rectangle(0, 0, width, 20, 0x000000, 1).setOrigin(0, 0).setScrollFactor(0, 0);
-    topBarRect.setDepth(2);
-    this.scoreText = this.add.bitmapText(10, 5, "pixelfont", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
     this.scoreText.setDepth(3);
-    this.timeText = this.add.bitmapText(width - 10, 5, "pixelfont", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
     this.timeText.setDepth(3);
     this.timeLimit = 600;
     this.timeTicking = true;
-
+    
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.cameras.main.startFollow(this.player);

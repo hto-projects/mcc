@@ -11,5 +11,12 @@
   </head>
   <body>
     <script type="module" src="main.js"></script>
+    <script>
+      if (window.CONTROLLER) {
+        const overlay = document.createElement("div");
+        overlay.classList.add("overlay");
+        document.body.appendChild(overlay)
+      }
+     </script>
   </body>
 </html>

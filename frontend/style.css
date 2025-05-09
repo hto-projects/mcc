@@ -9,3 +9,13 @@ html, body {
 canvas {
   height: 100%;
 }
+
+div.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #20202070;
+  z-index: 999;
+}
