@@ -4,6 +4,7 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       window.CONTROLLER = urlParams.has('controller');
+      window.CRT = urlParams.has('crt');
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" />
@@ -12,7 +13,7 @@
   <body>
     <script type="module" src="main.js"></script>
     <script>
-      if (window.CONTROLLER) {
+      if (window.CRT) {
         const overlay = document.createElement("div");
         overlay.classList.add("overlay");
         document.body.appendChild(overlay)

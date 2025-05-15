@@ -220,7 +220,7 @@ Good luck!`;
       }
     });
 
-    if (window.CONTROLLER) {
+    if (window.CRT) {
       this.scoreText = this.add.bitmapText(50, 20, "pixelfontblack", "", 12).setOrigin(0, 0).setScrollFactor(0, 0);
       this.timeText = this.add.bitmapText(width - 50, 20, "pixelfontblack", "", 12).setOrigin(1, 0).setScrollFactor(0, 0);
     } else {
