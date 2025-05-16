@@ -23,6 +23,22 @@ app.get('/high-scores', async (req, res) => {
   }
 });
 
+app.get('/hs-web', async (req, res) => {
+  try {
+    const scores = await highScoreModel.find({});
+    scores.sort((a, b) => b.score - a.score);
+    let str = ``;
+    for (let i = 0; i < scores.length; i++) {
+      scores[i] = scores[i].toObject();
+      str += `<div>${scores[i].initials}: ${scores[i].score}</div>`;
+    }
+    res.send(`<html><body>${str}</body></html>`);
+    res.end();
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.post('/high-scores', (req, res) => {
   try {
     const newScore = new highScoreModel(req.body);
